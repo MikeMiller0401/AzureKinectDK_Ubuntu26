@@ -9,28 +9,15 @@ NFOV and WFOV denote Narrow and Wide Field Of View configurations. Binned modes 
 
 NFOV 和 WFOV 分别表示窄视野和宽视野配置。合并模式通过将相邻的传感器像素组合成一个区块，从而降低相机捕获的分辨率
 
-##Parameter 参数
+## Parameter 参数
 
-1. Off
- 
-```Depth sensor will be turned off with this setting.```
+```bash
 
-2. NFOV_2x2Binned
+-d Off # Depth sensor will be turned off with this setting.
+-d NFOV_2x2Binned # Depth and Passive IR are captured at 320x288.
+-d NFOV_Unbinned # Depth and Passive IR are captured at 640x576.
+-d WFOV_2x2Binned # Depth and Passive IR are captured at 512x512.
+-d WFOV_Unbinned # Depth and Passive IR are captured at 1024x1024.
+-d PassiveIR # Passive IR only is captured at 1024x1024.
+```
 
-Depth and Passive IR are captured at 320x288.
-
-3. NFOV_Unbinned
-
-Depth and Passive IR are captured at 640x576.
-
-4. WFOV_2x2Binned
-   
-Depth and Passive IR are captured at 512x512.
-
-5. WFOV_Unbinned
-    
-Depth and Passive IR are captured at 1024x1024.
-
-6. PassiveIR
-
-Passive IR only is captured at 1024x1024.
