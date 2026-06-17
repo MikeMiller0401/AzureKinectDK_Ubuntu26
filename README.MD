@@ -51,3 +51,7 @@ If the resolution fo your displayer is 2k or 4k, maybe the font size of k4aviewe
 
 We can use ``` k4arecorder -h``` to check help of recorder.
 
+```bash
+k4arecorder -d NFOV_UNBINNED -c 1080p -r 5 output.mkv
+```
+
