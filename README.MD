@@ -2,9 +2,9 @@
 
 ## Installation
 
-The offical [installation](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) only supports Ubuntu 18, but we can use the 18.04 deb package in Ubuntu 26.04. 
+The offical [installation](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) only supports Ubuntu 18.04, but you can use the 18.04 deb package in Ubuntu 26.04. 
 
-However, Ubuntu 26.04 do not support libsoundio1_1.1.0 in offical iso-mirror ( as i know, ubuntu 20 & 22 & 24 also have this problem). But we can download from other source.
+However, Ubuntu 26.04 do not support libsoundio1_1.1.0 from offical iso-mirror (as I know, Ubuntu 20 & 22 & 24 also have this problem). But we can download this package from other source.
 
 1. Create download folder:
 ```bash
@@ -40,18 +40,23 @@ sudo cp 99-k4a.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
-
-6. Try to open k4aviewer
+## configuration and usage
+1. k4aviewer
 ```bash
 k4aviewer
 ```
 
-If the resolution fo your displayer is 2k or 4k, maybe the font size of k4aviewer will be too small to read. You can use ``` k4aviewer -HighDPI ``` in terminal.
+If the resolution fo your displayer is 2k or 4k, maybe the font size of k4aviewer will be too small to read. Please use:
 
+```bash
+k4aviewer -HighDPI
+``` 
 
-7. Try to use k4arecorder to capture Video
-
-We can use ``` k4arecorder -h``` to check help of recorder.
+2. k4arecorder in termial
+Check help document of k4arecorder:
+```bash
+k4arecorder -h
+```
 
 ```bash
 k4arecorder -d NFOV_UNBINNED -c 1080p -r 5 output.mkv
