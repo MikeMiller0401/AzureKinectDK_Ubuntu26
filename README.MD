@@ -58,7 +58,7 @@ Check help document of k4arecorder:
 ```bash
 k4arecorder -h
 ```
-
+Depth mode can be found in this [link](./Configuration details/depth_mode.markdown)
 Capture video using command line:
 ```bash
 k4arecorder -d NFOV_UNBINNED -c 1080p -r 5 output.mkv
