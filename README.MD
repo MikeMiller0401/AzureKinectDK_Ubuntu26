@@ -6,7 +6,7 @@ The offical [installation](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/
 
 However, Ubuntu 26.04 do not support libsoundio1_1.1.0 from offical iso-mirror (as I know, Ubuntu 20 & 22 & 24 also have this problem). But we can download this package from other source.
 
-1. Create download folder:
+### 1. Create download folder:
 ```bash
 mkdir ./azure_kinect
 cd azure_kinect
