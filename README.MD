@@ -2,7 +2,7 @@
 
 ## Installation
 
-The offical install (https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) only supports Ubuntu 18, but we can use the 18.04 deb package in Ubuntu 26.04. 
+The offical [installation](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) only supports Ubuntu 18, but we can use the 18.04 deb package in Ubuntu 26.04. 
 
 However, Ubuntu 26.04 do not support libsoundio1_1.1.0 in offical iso-mirror ( as i know, ubuntu 20 & 22 & 24 also have this problem). But we can download from other source.
 
