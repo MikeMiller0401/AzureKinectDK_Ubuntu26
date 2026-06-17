@@ -9,9 +9,11 @@ NFOV and WFOV denote Narrow and Wide Field Of View configurations. Binned modes 
 
 NFOV 和 WFOV 分别表示窄视野和宽视野配置。合并模式通过将相邻的传感器像素组合成一个区块，从而降低相机捕获的分辨率
 
+##Parameter 参数
+
 1. Off
  
-Depth sensor will be turned off with this setting.
+```Depth sensor will be turned off with this setting.```
 
 2. NFOV_2x2Binned
 
