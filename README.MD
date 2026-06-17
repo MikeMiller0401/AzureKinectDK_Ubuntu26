@@ -2,7 +2,7 @@
 
 The offical install (https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) only supports Ubuntu 18, but we can use the 18.04 deb package in Ubuntu 26.04. 
 
-However, Ubuntu 26.04 do not support libsoundio1_1.1.0 in offical iso-source ( as i know, ubuntu 20 & 22 & 24 also have this problem). But we can download from other source.
+However, Ubuntu 26.04 do not support libsoundio1_1.1.0 in offical iso-mirror ( as i know, ubuntu 20 & 22 & 24 also have this problem). But we can download from other source.
 
 1. Create download folder:
 ```bash
@@ -45,3 +45,9 @@ k4aviewer
 ```
 
 If the resolution fo your displayer is 2k or 4k, maybe the font size of k4aviewer will be too small to read. You can use ``` k4aviewer -HighDPI ``` in terminal.
+
+
+7. Try to use k4arecorder to capture Video
+
+We can use ``` k4arecorder -h``` to check help of recorder.
+
