@@ -1,4 +1,6 @@
-# Install Azure Kinect DK on Ubuntu 26.04
+# Azure Kinect DK on Ubuntu 26.04
+
+## Installation
 
 The offical install (https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) only supports Ubuntu 18, but we can use the 18.04 deb package in Ubuntu 26.04. 
 
