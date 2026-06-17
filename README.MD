@@ -12,7 +12,7 @@ mkdir ./azure_kinect
 cd azure_kinect
 ```
 
-2. Download Azure Kinect DK for Ubuntu 18.04 deb package:
+### 2. Download Azure Kinect DK for Ubuntu 18.04 deb package:
 ```bash
 wget https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.4/libk4a1.4_1.4.1_amd64.deb
 
@@ -20,12 +20,12 @@ wget https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.4-d
 
 wget https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/k/k4a-tools/k4a-tools_1.4.1_amd64.deb
 ```
-3. Download libsoundio1_1.1.0:
+### 3. Download libsoundio1_1.1.0:
 ```bash
 wget http://ftp.de.debian.org/debian/pool/main/libs/libsoundio/libsoundio1_1.1.0-1_amd64.deb
 ```
 
-4. Install package:
+### 4. Install package:
 ```bash
 sudo dpkg -i ./libsoundio1_1.1.0-1_amd64.deb
 sudo apt install ./libk4a1.4_1.4.1_amd64.deb
@@ -33,15 +33,16 @@ sudo apt install ./libk4a1.4-dev_1.4.1_amd64.deb
 sudo apt install ./k4a-tools_1.4.1_amd64.deb    
 ```
 
-5. Install udev
+### 5. Install udev
 ```bash
 wget https://raw.githubusercontent.com/microsoft/Azure-Kinect-Sensor-SDK/develop/scripts/99-k4a.rules
 sudo cp 99-k4a.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
-## configuration and usage
-1. k4aviewer
+
+## Configuration and usage
+### 1. k4aviewer
 ```bash
 k4aviewer
 ```
@@ -52,12 +53,13 @@ If the resolution fo your displayer is 2k or 4k, maybe the font size of k4aviewe
 k4aviewer -HighDPI
 ``` 
 
-2. k4arecorder in termial
+### 2. k4arecorder in termial
 Check help document of k4arecorder:
 ```bash
 k4arecorder -h
 ```
 
+Capture video using command line:
 ```bash
 k4arecorder -d NFOV_UNBINNED -c 1080p -r 5 output.mkv
 ```
