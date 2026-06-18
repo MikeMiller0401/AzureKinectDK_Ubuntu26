@@ -5,6 +5,7 @@ import time
 # 1. 配置相机
 # =========================
 config = o3d.io.AzureKinectSensorConfig()
+o3d.io.write_azure_kinect_sensor_config("azure_kinect_config.json", config)
 
 # 可选：修改分辨率 / 模式
 # config.color_resolution = o3d.io.AzureKinectSensorConfig.ColorResolution.RES_1080P
@@ -20,10 +21,11 @@ recorder = o3d.io.AzureKinectRecorder(config, 0)
 # =========================
 recorder.init_sensor()
 
+
 # =========================
 # 4. 开始录制文件
 # =========================
-recorder.open_record("test002.mkv")
+recorder.open_record("test003.mkv")
 
 print("Start recording... Press Ctrl+C to stop")
 
