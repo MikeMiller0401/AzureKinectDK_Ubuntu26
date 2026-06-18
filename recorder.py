@@ -6,7 +6,7 @@ import os
 video_name = "test003"
 video_save_path = os.path.join("video")
 # TODO: need fix path bug!!!
-config_path = os.path.join(video_save_path, video_name, ".json")
+config_path = os.path.join(video_save_path, video_name + ".json")
 config = o3d.io.AzureKinectSensorConfig()
 o3d.io.write_azure_kinect_sensor_config("azure_kinect_config.json", config)
 
