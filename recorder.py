@@ -1,9 +1,12 @@
 import open3d as o3d
 import time
+import numpy as np
+import os
 
-# =========================
-# 1. 配置相机
-# =========================
+video_name = "test003"
+video_save_path = os.path.join("video")
+# TODO: need fix path bug!!!
+config_path = os.path.join(video_save_path, video_name, ".json")
 config = o3d.io.AzureKinectSensorConfig()
 o3d.io.write_azure_kinect_sensor_config("azure_kinect_config.json", config)
 
@@ -25,7 +28,7 @@ recorder.init_sensor()
 # =========================
 # 4. 开始录制文件
 # =========================
-recorder.open_record("test003.mkv")
+recorder.open_record(os.path.join(video_name, ".mkv"))
 
 print("Start recording... Press Ctrl+C to stop")
 
