@@ -4,11 +4,11 @@ import numpy as np
 import cv2
 
 path = "video"
-mkv_path = os.path.join(path, "output.mkv")
+mkv_path = os.path.join(path, "test004.mkv")
 
 playback = PyK4APlayback(mkv_path)
 playback.open()
-K_rgb = playback.calibration.get_camera_matrix(0)
+K_rgb = playback.calibration.get_camera_matrix(2)
 print(f"K_rgb: {K_rgb}")
 K_depth = playback.calibration.get_camera_matrix(1)
 print(f"K_depth: {K_depth}")

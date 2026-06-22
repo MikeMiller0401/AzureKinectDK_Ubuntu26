@@ -70,5 +70,9 @@ k4arecorder -d NFOV_UNBINNED -c 1080p -r 5 output.mkv
 
 open3d have supported the azure kinect dk development. If you want to use open3d to develop in python enviroment, please create a conda enviroment first and then using ```pip install open3d```.
 
-The open3d development document could been check in [this link](https://github.com/MikeMiller0401/AzureKinectDK_Ubuntu26/blob/master/Configuration%20details/open3d_azure.markdown)
+The open3d development document could been check in [this link](https://github.com/MikeMiller0401/AzureKinectDK_Ubuntu26/blob/master/Configuration%20details/open3d_azure.markdown).
+
+Use ```recorder.py``` to record the mkv video.
+
+Use ```save_color&depth.py``` to capture film from mkv file.
 
