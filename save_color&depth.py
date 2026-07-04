@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     reader = o3d.io.AzureKinectMKVReader()
     # metadate = reader.get_metadata()
-    video_name = "test004"
+    video_name = "tian-cave5"
     video_path = os.path.join("video", video_name + ".mkv")
     output_path = os.path.join("output", video_name)
     success = reader.open(video_path)
