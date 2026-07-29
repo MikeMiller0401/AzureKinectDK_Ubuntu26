@@ -17,8 +17,8 @@ def save_depth(capture, depth_path):
     np.save(os.path.join(depth_path, f"{i:06d}.npy"), depth)
 
     # 2. 设定固定的可视化范围（例如：500mm 到 4000mm，根据你的拍摄场景调整）
-    min_distance = 400
-    max_distance = 4000
+    min_distance = 0
+    max_distance = 550
 
     # 3. 裁剪数据并将其固定映射到 0-255
     # 将超出范围的值截断
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     reader = o3d.io.AzureKinectMKVReader()
     # metadate = reader.get_metadata()
-    video_name = "tian-cave5"
+    video_name = "holes_wet_30p"
     video_path = os.path.join("video", video_name + ".mkv")
     output_path = os.path.join("output", video_name)
     success = reader.open(video_path)
