@@ -2,6 +2,7 @@ import time
 import os
 import json
 import csv
+import numpy as np
 import pyk4a
 from pyk4a import PyK4A, PyK4ARecord, Config, ColorResolution, DepthMode, FPS, ImageFormat, WiredSyncMode
 from pyk4a.errors import K4ATimeoutException
@@ -22,6 +23,11 @@ _RES_MAP = {
     "2160P": ColorResolution.RES_2160P,
     "3072P": ColorResolution.RES_3072P,
 }
+
+# 运行时控制项（可在 main 中直接改）
+EXPOSURE_US = None
+AUTO_EXPOSURE = True
+SAVE_ALIGNED_DEPTH = True
 
 def init_config(config_path):
     with open(config_path, 'r', encoding='utf-8') as f:
@@ -54,7 +60,7 @@ def init_config(config_path):
     return config, fps_int
 
 
-def record(video_name, config, fps, exposure_us=None, auto_exposure=False):
+def record(video_name, config, fps):
     """
     录制视频和 IMU 数据
     
@@ -62,8 +68,7 @@ def record(video_name, config, fps, exposure_us=None, auto_exposure=False):
       video_name: 视频名称（不含扩展名）
       config: pyk4a.Config 对象
       fps: 帧率（整数）
-      exposure_us: 曝光时间（微秒），范围 500-133330，None 表示不改变默认值
-      auto_exposure: 是否启用自动曝光（True 则忽略 exposure_us）
+            曝光和对齐开关：在 main 中直接修改 EXPOSURE_US / AUTO_EXPOSURE / SAVE_ALIGNED_DEPTH
     """
     os.makedirs("video", exist_ok=True)
     mkv_path = os.path.join("video", video_name.strip() + ".mkv")
@@ -73,12 +78,12 @@ def record(video_name, config, fps, exposure_us=None, auto_exposure=False):
     device.start()
 
     # 设置曝光
-    if auto_exposure:
+    if AUTO_EXPOSURE:
         device.exposure_mode_auto = True
         print(f"✓ Auto exposure enabled")
-    elif exposure_us is not None:
+    elif EXPOSURE_US is not None:
         # 曝光范围: 500-133330 微秒，步长 100
-        exposure_us = max(500, min(133330, exposure_us))
+        exposure_us = max(500, min(133330, EXPOSURE_US))
         device.exposure = exposure_us
         print(f"✓ Exposure set to {exposure_us} µs ({exposure_us/1000:.1f} ms)")
     else:
@@ -99,6 +104,7 @@ def record(video_name, config, fps, exposure_us=None, auto_exposure=False):
     print('=' * 80)
 
     imu_rows = []
+    aligned_saved = 0
 
     try:
         while True:
@@ -130,7 +136,10 @@ def record(video_name, config, fps, exposure_us=None, auto_exposure=False):
                 })
 
             total_duration = time.time() - recording_start_time
-            print(f"\rFrame {frame_count:05d} | {total_duration:.2f}s | IMU samples: {len(imu_rows)}", end="", flush=True)
+            status = f"\rFrame {frame_count:05d} | {total_duration:.2f}s | IMU samples: {len(imu_rows)}"
+            if SAVE_ALIGNED_DEPTH:
+                status += f" | Aligned depth: {aligned_saved}"
+            print(status, end="", flush=True)
 
             elapsed = time.time() - start_time
             sleep_time = FRAME_DURATION - elapsed
@@ -160,9 +169,8 @@ def record(video_name, config, fps, exposure_us=None, auto_exposure=False):
 
     print(f"MKV saved: {frame_count} frames → {mkv_path}")
 
-
 if __name__ == "__main__":
-    video_name  = "holes_wet_30p"
+    video_name  = "wet_pyk4a"
     config_name = "720p_NFOV_UNBINNED"
     config_path = os.path.join("config", config_name + ".json")
     config, fps = init_config(config_path)
@@ -173,8 +181,8 @@ if __name__ == "__main__":
     # auto_exposure = False
     
     # 选项 2: 自动曝光
-    exposure_us = None
-    auto_exposure = True
-    
-    record(video_name, config, fps, exposure_us=exposure_us, auto_exposure=auto_exposure)
+    EXPOSURE_US = None
+    AUTO_EXPOSURE = True
+
+    record(video_name, config, fps)
     
