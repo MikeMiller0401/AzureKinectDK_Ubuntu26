@@ -20,6 +20,7 @@ def depth_to_colormap(depth: np.ndarray) -> np.ndarray:
     if hi <= lo:
         hi = lo + 1.0
 
+
     scaled = ((depth.astype(np.float32) - lo) * 255.0 / (hi - lo)).clip(0, 255)
     scaled[~valid] = 0
     scaled_u8 = scaled.astype(np.uint8)
