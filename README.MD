@@ -65,14 +65,25 @@ Capture video using command line:
 ```bash
 k4arecorder -d NFOV_UNBINNED -c 1080p -r 5 output.mkv
 ```
+## Python env development based pyk4a
+
+pyk4a is the offical python library for Azure Kinect DK. The development document could been check in [this link](https://github.com/etiennedub/pyk4a)
+
+If you want to use this lib, please using ```pip install pyk4a```
+
+Use ```recorder_pyk4a.py``` to record the mkv video using pyk4a.
+
+Use ```save&depth_aligned.py``` to capture film from mkv file.
 
 ## Python env development based open3d
 
-open3d have supported the azure kinect dk development. If you want to use open3d to develop in python enviroment, please create a conda enviroment first and then using ```pip install open3d```.
+Open3D have supported the Azure Kinect DK development. If you want to use open3d to develop in python enviroment, please create a conda enviroment first and then using ```pip install open3d```.
 
-The open3d development document could been check in [this link](https://github.com/MikeMiller0401/AzureKinectDK_Ubuntu26/blob/master/Configuration%20details/open3d_azure.markdown).
+The Open3D development document could been check in [this link](https://github.com/MikeMiller0401/AzureKinectDK_Ubuntu26/blob/master/Configuration%20details/open3d_azure.markdown).
 
 Use ```recorder_open3d.py``` to record the mkv video using Open3D.
 
 Use ```save_color&depth.py``` to capture film from mkv file.
 
+
+TODO: ALIGNED DEPTH IS IMPORTENT FOR CV!!!!

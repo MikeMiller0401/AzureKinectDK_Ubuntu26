@@ -17,14 +17,17 @@ This script reads {MKV_PATH} and exports data from each valid capture to output/
 
 """
 
+#TODO: Add export of RGB Intrinsic.
+
+
 import os
 import sys
 import cv2
 import numpy as np
 from pyk4a import PyK4APlayback
-
-MKV_PATH = os.path.join("video", "dry_open3d.mkv")
-OUTPUT_DIR = os.path.join("output", "dry_open3d_export")
+SCENE_NAME = "wet_open3d"
+MKV_PATH = os.path.join("video", f"{SCENE_NAME}.mkv")
+OUTPUT_DIR = os.path.join("output", f"{SCENE_NAME}_export")
 DEPTH_RAW_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_raw")
 DEPTH_VIS_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_transformed")
 RGB_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_raw")
