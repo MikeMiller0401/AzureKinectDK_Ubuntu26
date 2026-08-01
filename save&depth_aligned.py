@@ -1,3 +1,18 @@
+"""导出/Export Azure Kinect 回放中的对齐深度与原始彩色帧。
+
+中文：
+该脚本会读取 {MKV_PATH}，并将每个有效 capture 的数据保存到 output/{OUTPUT_DIR}/ 下：
+- depth_raw/: 对齐后的原始深度（uint16 .npy）
+- depth_transformed/: 伪彩可视化深度图（.png）
+- rgb_raw/: 原始彩色图像（.png）
+
+English:
+This script reads {MKV_PATH} and exports data from each valid capture to output/{OUTPUT_DIR}/:
+- depth_raw/: aligned raw depth frames (uint16 .npy)
+- depth_transformed/: pseudo-color depth visualizations (.png)
+- rgb_raw/: raw color images (.png)
+"""
+
 import os
 import sys
 
@@ -7,6 +22,14 @@ from pyk4a import (
     PyK4APlayback,
 )
 
+MKV_PATH = os.path.join("video", "dry_open3d.mkv")
+OUTPUT_DIR = os.path.join("output", "dry_open3d_export")
+DEPTH_RAW_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_raw")
+DEPTH_VIS_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_transformed")
+RGB_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_raw")
+os.makedirs(DEPTH_RAW_OUT_DIR, exist_ok=True)
+os.makedirs(DEPTH_VIS_OUT_DIR, exist_ok=True)
+os.makedirs(RGB_OUT_DIR, exist_ok=True)
 
 def depth_to_colormap(depth: np.ndarray) -> np.ndarray:
     """Convert uint16 depth to a visible pseudo-color image."""
@@ -55,7 +78,6 @@ def normalize_color_frame(color_raw: np.ndarray) -> np.ndarray | None:
     return None
 
 
-MKV_PATH = os.path.join("video", "dry_open3d.mkv")
 if not os.path.exists(MKV_PATH):
     print(f"MKV not found: {MKV_PATH}")
     sys.exit(1)
@@ -63,13 +85,7 @@ if not os.path.exists(MKV_PATH):
 playback = PyK4APlayback(MKV_PATH)
 playback.open()
 
-OUTPUT_DIR = os.path.join("output", "dry_open3d_export")
-DEPTH_RAW_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_raw")
-DEPTH_VIS_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_transformed")
-RGB_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_raw")
-os.makedirs(DEPTH_RAW_OUT_DIR, exist_ok=True)
-os.makedirs(DEPTH_VIS_OUT_DIR, exist_ok=True)
-os.makedirs(RGB_OUT_DIR, exist_ok=True)
+
 
 frame_idx = 0
 saved_idx = 0
