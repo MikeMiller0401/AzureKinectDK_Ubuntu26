@@ -1,4 +1,12 @@
-"""导出/Export Azure Kinect 回放中的对齐深度与原始彩色帧。
+"""
+Export aligned depth and RGB from Azure Kinect DK MKV file.
+导出 Azure Kinect 回放中的对齐深度与原始彩色帧。 
+
+English:
+This script reads {MKV_PATH} and exports data from each valid capture to output/{OUTPUT_DIR}/:
+- depth_raw/: aligned raw depth frames (uint16 .npy)
+- depth_transformed/: pseudo-color depth visualizations (.png)
+- rgb_raw/: raw color images (.png)
 
 中文：
 该脚本会读取 {MKV_PATH}，并将每个有效 capture 的数据保存到 output/{OUTPUT_DIR}/ 下：
@@ -6,21 +14,14 @@
 - depth_transformed/: 伪彩可视化深度图（.png）
 - rgb_raw/: 原始彩色图像（.png）
 
-English:
-This script reads {MKV_PATH} and exports data from each valid capture to output/{OUTPUT_DIR}/:
-- depth_raw/: aligned raw depth frames (uint16 .npy)
-- depth_transformed/: pseudo-color depth visualizations (.png)
-- rgb_raw/: raw color images (.png)
+
 """
 
 import os
 import sys
-
 import cv2
 import numpy as np
-from pyk4a import (
-    PyK4APlayback,
-)
+from pyk4a import PyK4APlayback
 
 MKV_PATH = os.path.join("video", "dry_open3d.mkv")
 OUTPUT_DIR = os.path.join("output", "dry_open3d_export")
@@ -84,8 +85,6 @@ if not os.path.exists(MKV_PATH):
 
 playback = PyK4APlayback(MKV_PATH)
 playback.open()
-
-
 
 frame_idx = 0
 saved_idx = 0
