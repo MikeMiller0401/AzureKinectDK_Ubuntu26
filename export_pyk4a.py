@@ -25,7 +25,7 @@ import sys
 import cv2
 import numpy as np
 from pyk4a import PyK4APlayback
-SCENE_NAME = "wet_open3d"
+SCENE_NAME = "dry_pyk4a"
 MKV_PATH = os.path.join("video", f"{SCENE_NAME}.mkv")
 OUTPUT_DIR = os.path.join("output", f"{SCENE_NAME}_export")
 DEPTH_RAW_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_raw")

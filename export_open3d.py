@@ -46,7 +46,7 @@ def save_camera(video_path, save_path):
     playback.close()
 
     print("Saved K_rgb.txt and K_depth.txt")
-)
+
 
 if __name__ == "__main__":
     # config = o3d.io.read_azure_kinect_mkv_metadata("/home/tcy/PycharmProjects/AzureKinectDK_Ubuntu26/video/test003.mkv")
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     reader = o3d.io.AzureKinectMKVReader()
     # metadate = reader.get_metadata()
-    video_name = "dry_open3d"
+    video_name = "wet_open3d"
     video_path = os.path.join("video", video_name + ".mkv")
     output_path = os.path.join("output", video_name)
     success = reader.open(video_path)

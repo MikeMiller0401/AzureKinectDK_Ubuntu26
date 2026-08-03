@@ -1,4 +1,4 @@
-# Azure Kinect DK on Ubuntu 26.04
+# Azure Kinect DK on Ubuntu
 
 ## Installation
 
@@ -73,7 +73,7 @@ If you want to use this lib, please using ```pip install pyk4a```
 
 Use ```recorder_pyk4a.py``` to record the mkv video using pyk4a.
 
-Use ```save&depth_aligned.py``` to capture film from mkv file.
+Use ```export_pyk4a.py``` to capture film from mkv file.
 
 ## Python env development based open3d
 
@@ -83,7 +83,7 @@ The Open3D development document could been check in [this link](https://github.c
 
 Use ```recorder_open3d.py``` to record the mkv video using Open3D.
 
-Use ```save_color&depth.py``` to capture film from mkv file.
+Use ```export_open3d.py``` to capture film from mkv file.
 
 
 TODO: ALIGNED DEPTH IS IMPORTENT FOR CV!!!!
