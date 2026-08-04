@@ -18,6 +18,13 @@
             "request": "launch",
             "program": "test.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "export_pyk4a",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "export_pyk4a.py",
+            "console": "integratedTerminal"
         }
     ]
 }

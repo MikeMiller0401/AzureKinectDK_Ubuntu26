@@ -85,5 +85,3 @@ Use ```recorder_open3d.py``` to record the mkv video using Open3D.
 
 Use ```export_open3d.py``` to capture film from mkv file.
 
-
-TODO: ALIGNED DEPTH IS IMPORTENT FOR CV!!!!

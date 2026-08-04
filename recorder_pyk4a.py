@@ -53,8 +53,8 @@ def init_config(config_path):
         color_resolution=res_enum,
         depth_mode=dep_enum,
         camera_fps=fps_enum,
-        color_format=ImageFormat.COLOR_MJPG,
-        synchronized_images_only=True,
+        color_format=ImageFormat.COLOR_BGRA32,
+        synchronized_images_only=True, 
         wired_sync_mode=WiredSyncMode.STANDALONE,
     )
     return config, fps_int

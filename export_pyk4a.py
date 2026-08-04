@@ -17,23 +17,15 @@ This script reads {MKV_PATH} and exports data from each valid capture to output/
 
 """
 
-#TODO: Add export of RGB Intrinsic.
 
 
+import itertools
 import os
 import sys
 import cv2
 import numpy as np
 from pyk4a import PyK4APlayback
-SCENE_NAME = "dry_pyk4a"
-MKV_PATH = os.path.join("video", f"{SCENE_NAME}.mkv")
-OUTPUT_DIR = os.path.join("output", f"{SCENE_NAME}_export")
-DEPTH_RAW_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_raw")
-DEPTH_VIS_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_transformed")
-RGB_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_raw")
-os.makedirs(DEPTH_RAW_OUT_DIR, exist_ok=True)
-os.makedirs(DEPTH_VIS_OUT_DIR, exist_ok=True)
-os.makedirs(RGB_OUT_DIR, exist_ok=True)
+from pyk4a.calibration import CalibrationType
 
 def depth_to_colormap(depth: np.ndarray) -> np.ndarray:
     """Convert uint16 depth to a visible pseudo-color image."""
@@ -53,14 +45,13 @@ def depth_to_colormap(depth: np.ndarray) -> np.ndarray:
     scaled_u8 = scaled.astype(np.uint8)
     return cv2.applyColorMap(scaled_u8, cv2.COLORMAP_TURBO)
 
-
 def normalize_color_frame(color_raw: np.ndarray) -> np.ndarray | None:
     """Normalize color payload into a standard HxWx3 BGR image."""
     if color_raw is None:
         return None
 
     # Common in MKV playback: encoded color bytes stored as (N, 1) or (1, N).
-    if color_raw.dtype == np.uint8 and (
+    if isinstance(color_raw, np.ndarray) and color_raw.dtype == np.uint8 and (
         color_raw.ndim == 1
         or (color_raw.ndim == 2 and (color_raw.shape[0] == 1 or color_raw.shape[1] == 1))
     ):
@@ -69,63 +60,172 @@ def normalize_color_frame(color_raw: np.ndarray) -> np.ndarray | None:
         if decoded is not None:
             return decoded
 
-    if color_raw.ndim == 3 and color_raw.shape[2] == 4:
+    if isinstance(color_raw, np.ndarray) and color_raw.ndim == 3 and color_raw.shape[2] == 4:
         return cv2.cvtColor(color_raw, cv2.COLOR_BGRA2BGR)
 
-    if color_raw.ndim == 3 and color_raw.shape[2] == 3:
+    if isinstance(color_raw, np.ndarray) and color_raw.ndim == 3 and color_raw.shape[2] == 3:
         return color_raw
 
-    if color_raw.ndim == 2:
+    if isinstance(color_raw, np.ndarray) and color_raw.ndim == 2:
         # If this is already a single-channel image, keep it savable as 3-channel BGR.
         return cv2.cvtColor(color_raw, cv2.COLOR_GRAY2BGR)
 
     return None
 
 
-if not os.path.exists(MKV_PATH):
-    print(f"MKV not found: {MKV_PATH}")
-    sys.exit(1)
+def save_intrinsics(playback, output_dir: str):
+    """Save camera intrinsics to the specified output directory.""" 
+    
+    K_depth = playback.calibration.get_camera_matrix(CalibrationType.DEPTH)
+    K_RGB = playback.calibration.get_camera_matrix(CalibrationType.COLOR)
+    
+    np.savetxt(os.path.join(output_dir, "intrinsic_depth.txt"), K_depth, fmt="%.9f")
+    np.savetxt(os.path.join(output_dir, "intrinsic_color.txt"), K_RGB, fmt="%.9f")
+    
+    dist_depth = playback.calibration.get_distortion_coefficients(CalibrationType.DEPTH)
+    np.savetxt(os.path.join(output_dir, "distortion_depth.txt"), dist_depth, fmt="%.9f")
+    dist_color = playback.calibration.get_distortion_coefficients(CalibrationType.COLOR)
+    np.savetxt(os.path.join(output_dir, "distortion_color.txt"), dist_color, fmt="%.9f")
 
-playback = PyK4APlayback(MKV_PATH)
-playback.open()
 
-frame_idx = 0
-saved_idx = 0
-try:
-    while True:
-        try:
-            capture = playback.get_next_capture()
-        except EOFError:
-            print("Reached end of MKV file.")
-            break
+def aligned_depth(capture):
+    depth_aligned = capture.transformed_depth
+    return depth_aligned
 
-        depth_aligned = capture.transformed_depth
-        color_raw = capture.color
-        if depth_aligned is None or color_raw is None:
+def aligned_color(capture):
+    color_aligned = capture.transformed_color
+    return color_aligned
+
+def align_rgb_to_depth(depth: np.ndarray, color_raw: np.ndarray, calibration) -> np.ndarray | None:
+    """Align a color image to the depth camera coordinate system."""
+    color_img = normalize_color_frame(color_raw)
+    if color_img is None:
+        return None
+
+    if depth is None:
+        return None
+
+    depth = np.asarray(depth)
+    if depth.ndim != 2:
+        return None
+
+    height, width = depth.shape
+    aligned_color = np.zeros((height, width, 3), dtype=np.uint8)
+    valid = depth > 0
+    if not np.any(valid):
+        return aligned_color
+
+    for y in range(height):
+        for x in range(width):
+            if not valid[y, x]:
+                continue
+
+            point_3d = calibration.convert_2d_to_3d(
+                (float(x), float(y)),
+                float(depth[y, x]),
+                CalibrationType.DEPTH,
+                CalibrationType.DEPTH,
+            )
+            color_xy = calibration.convert_3d_to_2d(
+                point_3d,
+                CalibrationType.DEPTH,
+                CalibrationType.COLOR,
+            )
+            u = int(round(color_xy[0]))
+            v = int(round(color_xy[1]))
+
+            if 0 <= u < color_img.shape[1] and 0 <= v < color_img.shape[0]:
+                aligned_color[y, x] = color_img[v, u]
+
+    return aligned_color
+
+
+class SimpleProgressBar:
+    def __init__(self, total: int | None = None):
+        self.total = total
+        self.current = 0
+        self.spinner = itertools.cycle(["|", "/", "-", "\\"])
+
+    def update(self, increment: int = 1) -> None:
+        self.current += increment
+        if self.total is not None:
+            percent = min(100, int(self.current / self.total * 100)) if self.total else 0
+            filled = int(percent / 2)
+            bar = f"[{'#' * filled}{'-' * (50 - filled)}] {percent:3d}%"
+            sys.stdout.write(f"\r{bar} ({self.current}/{self.total})")
+        else:
+            sys.stdout.write(f"\r{'Processing':<12} {next(self.spinner)} frame {self.current}")
+        sys.stdout.flush()
+
+    def close(self) -> None:
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+
+
+def main():
+    SCENE_NAME = "dry_pyk4a"
+    
+    MKV_PATH = os.path.join("video", f"{SCENE_NAME}.mkv")
+    OUTPUT_DIR = os.path.join("output", f"{SCENE_NAME}_export")
+    DEPTH_RAW_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_raw")
+    DEPTH_VIS_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_vis")
+    RGB_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_raw")
+    RGB_ALIGNED_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_aligned")
+    os.makedirs(RGB_ALIGNED_OUT_DIR, exist_ok=True)
+    os.makedirs(DEPTH_RAW_OUT_DIR, exist_ok=True)
+    os.makedirs(DEPTH_VIS_OUT_DIR, exist_ok=True)
+    os.makedirs(RGB_OUT_DIR, exist_ok=True)
+    if not os.path.exists(MKV_PATH):
+        print(f"MKV not found: {MKV_PATH}")
+        sys.exit(1)
+    playback = PyK4APlayback(MKV_PATH)  
+    playback.open()
+    save_intrinsics(playback, OUTPUT_DIR)
+    frame_idx = 0
+    saved_idx = 0
+    progress = SimpleProgressBar()
+    
+    try:
+        while True:
+            try:
+                capture = playback.get_next_capture()
+            except EOFError:
+                print("Reached end of MKV file.")
+                break
+            
+            # 保存原始数据
+            depth_raw = capture.depth
+            color_raw = capture.color
+            depthraw_out_path = os.path.join(DEPTH_RAW_OUT_DIR, f"{saved_idx:06d}.npy")
+            colorraw_out_path = os.path.join(RGB_OUT_DIR, f"{saved_idx:06d}.png")
+            np.save(depthraw_out_path, depth_raw)
+            color_img = normalize_color_frame(color_raw) 
+            cv2.imwrite(colorraw_out_path, color_img)
+            
+            
+            # 生成&保存可视化的深度数据
+            vis_aligned = depth_to_colormap(depth_raw)
+            depthvis_out_path = os.path.join(DEPTH_VIS_OUT_DIR, f"{saved_idx:06d}.png")
+            cv2.imwrite(depthvis_out_path, vis_aligned)
+
+            
+            # 生成对齐的彩色图像
+            aligned_color_img = normalize_color_frame(aligned_color(capture))
+            aligned_color_out_path = os.path.join(RGB_ALIGNED_OUT_DIR, f"{saved_idx:06d}_aligned.png")
+            cv2.imwrite(aligned_color_out_path, aligned_color_img)
+            
+            saved_idx += 1
+
             frame_idx += 1
-            continue
+            progress.update()
+    finally:
+        playback.close()
+        progress.close()
 
-        vis_aligned = depth_to_colormap(depth_aligned)
-        rgb_to_save = normalize_color_frame(color_raw)
-        if rgb_to_save is None:
-            print(f"Skip frame {frame_idx}: unsupported color shape {color_raw.shape}")
-            frame_idx += 1
-            continue
-        
-        depthraw_out_path = os.path.join(DEPTH_RAW_OUT_DIR, f"{saved_idx:06d}.npy")
-        depthvis_out_path = os.path.join(DEPTH_VIS_OUT_DIR, f"{saved_idx:06d}.png")
-        rgb_out_path = os.path.join(RGB_OUT_DIR, f"{saved_idx:06d}.png")
-        
-        np.save(depthraw_out_path, depth_aligned)
-        cv2.imwrite(depthvis_out_path, vis_aligned)
-        cv2.imwrite(rgb_out_path, rgb_to_save)
-        saved_idx += 1
+    print(f"Processed {frame_idx} captures.")
+    print(f"Saved {saved_idx} raw depth npy files to: {DEPTH_RAW_OUT_DIR}")
+    print(f"Saved {saved_idx} transformed depth images to: {DEPTH_VIS_OUT_DIR}")
+    print(f"Saved {saved_idx} raw RGB images to: {RGB_OUT_DIR}")
 
-        frame_idx += 1
-finally:
-    playback.close()
-
-print(f"Processed {frame_idx} captures.")
-print(f"Saved {saved_idx} raw depth npy files to: {DEPTH_RAW_OUT_DIR}")
-print(f"Saved {saved_idx} transformed depth images to: {DEPTH_VIS_OUT_DIR}")
-print(f"Saved {saved_idx} raw RGB images to: {RGB_OUT_DIR}")
+if __name__ == "__main__":
+    main()
