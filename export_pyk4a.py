@@ -197,13 +197,11 @@ def main():
             color_img = normalize_color_frame(color_raw) 
             cv2.imwrite(colorraw_out_path, color_img)
             
-            
             # 生成&保存可视化的深度数据
             vis_aligned = depth_to_colormap(depth_raw)
             depthvis_out_path = os.path.join(DEPTH_VIS_OUT_DIR, f"{saved_idx:06d}.png")
             cv2.imwrite(depthvis_out_path, vis_aligned)
 
-            
             # 生成对齐的彩色图像
             aligned_color_img = normalize_color_frame(aligned_color(capture))
             aligned_color_out_path = os.path.join(RGB_ALIGNED_OUT_DIR, f"{saved_idx:06d}_aligned.png")
