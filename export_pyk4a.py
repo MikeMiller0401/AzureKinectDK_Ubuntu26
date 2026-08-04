@@ -13,12 +13,7 @@ This script reads {MKV_PATH} and exports data from each valid capture to output/
 - depth_raw/: 对齐后的原始深度（uint16 .npy）
 - depth_transformed/: 伪彩可视化深度图（.png）
 - rgb_raw/: 原始彩色图像（.png）
-
-
 """
-
-
-
 import itertools
 import os
 import sys
