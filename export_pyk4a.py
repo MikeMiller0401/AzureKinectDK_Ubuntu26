@@ -128,7 +128,6 @@ def align_rgb_to_depth(depth: np.ndarray, color_raw: np.ndarray, calibration) ->
             )
             u = int(round(color_xy[0]))
             v = int(round(color_xy[1]))
-
             if 0 <= u < color_img.shape[1] and 0 <= v < color_img.shape[0]:
                 aligned_color[y, x] = color_img[v, u]
 
@@ -158,7 +157,7 @@ class SimpleProgressBar:
 
 
 def main():
-    SCENE_NAME = "dry_pyk4a"
+    SCENE_NAME = "wet_pyk4a"
     
     MKV_PATH = os.path.join("video", f"{SCENE_NAME}.mkv")
     OUTPUT_DIR = os.path.join("output", f"{SCENE_NAME}_export")
@@ -166,10 +165,14 @@ def main():
     DEPTH_VIS_OUT_DIR = os.path.join(OUTPUT_DIR, "depth_vis")
     RGB_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_raw")
     RGB_ALIGNED_OUT_DIR = os.path.join(OUTPUT_DIR, "rgb_aligned")
+    IR_RAW_OUT_DIR = os.path.join(OUTPUT_DIR, "ir_raw")
+    PC_OUT_DIR = os.path.join(OUTPUT_DIR, "point_cloud")
     os.makedirs(RGB_ALIGNED_OUT_DIR, exist_ok=True)
     os.makedirs(DEPTH_RAW_OUT_DIR, exist_ok=True)
     os.makedirs(DEPTH_VIS_OUT_DIR, exist_ok=True)
     os.makedirs(RGB_OUT_DIR, exist_ok=True)
+    os.makedirs(IR_RAW_OUT_DIR, exist_ok=True)
+    os.makedirs(PC_OUT_DIR, exist_ok=True)
     if not os.path.exists(MKV_PATH):
         print(f"MKV not found: {MKV_PATH}")
         sys.exit(1)
@@ -191,9 +194,12 @@ def main():
             # 保存原始数据
             depth_raw = capture.depth
             color_raw = capture.color
+            ir_raw = capture.ir
             depthraw_out_path = os.path.join(DEPTH_RAW_OUT_DIR, f"{saved_idx:06d}.npy")
+            irraw_out_path = os.path.join(IR_RAW_OUT_DIR, f"{saved_idx:06d}.npy")
             colorraw_out_path = os.path.join(RGB_OUT_DIR, f"{saved_idx:06d}.png")
             np.save(depthraw_out_path, depth_raw)
+            np.save(irraw_out_path, ir_raw)
             color_img = normalize_color_frame(color_raw) 
             cv2.imwrite(colorraw_out_path, color_img)
             
@@ -202,13 +208,17 @@ def main():
             depthvis_out_path = os.path.join(DEPTH_VIS_OUT_DIR, f"{saved_idx:06d}.png")
             cv2.imwrite(depthvis_out_path, vis_aligned)
 
-            # 生成对齐的彩色图像
+            # 生成&保存对齐的彩色图像
             aligned_color_img = normalize_color_frame(aligned_color(capture))
             aligned_color_out_path = os.path.join(RGB_ALIGNED_OUT_DIR, f"{saved_idx:06d}_aligned.png")
             cv2.imwrite(aligned_color_out_path, aligned_color_img)
             
+            # 生成&保存深度镜头的点云数据
+            pc = capture.depth_point_cloud
+            pc_out_path = os.path.join(PC_OUT_DIR, f"{saved_idx:06d}.npy")
+            np.save(pc_out_path, pc)
+            
             saved_idx += 1
-
             frame_idx += 1
             progress.update()
     finally:
@@ -216,9 +226,6 @@ def main():
         progress.close()
 
     print(f"Processed {frame_idx} captures.")
-    print(f"Saved {saved_idx} raw depth npy files to: {DEPTH_RAW_OUT_DIR}")
-    print(f"Saved {saved_idx} transformed depth images to: {DEPTH_VIS_OUT_DIR}")
-    print(f"Saved {saved_idx} raw RGB images to: {RGB_OUT_DIR}")
 
 if __name__ == "__main__":
     main()
