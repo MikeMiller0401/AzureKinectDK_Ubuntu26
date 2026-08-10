@@ -73,9 +73,11 @@ pyk4a is the offical python library for Azure Kinect DK. The development documen
 
 If you want to use this lib, please using ```pip install pyk4a``` in your python environment.
 
-Use ```recorder_pyk4a.py``` to record the mkv video using pyk4a.
+We have provided two python scripts to record and export the mkv video using pyk4a.
 
-Use ```export_pyk4a.py``` to capture film from mkv file.
+Please use ```recorder_pyk4a.py``` to record the mkv video using pyk4a.
+
+Please use ```export_pyk4a.py``` to export RGB, Depth IR and IMU data from mkv file.
 
 ## D. Python env development based open3d
 
@@ -83,7 +85,9 @@ Open3D have supported the Azure Kinect DK development. If you want to use open3d
 
 The Open3D development document could been check in [this link](https://github.com/MikeMiller0401/AzureKinectDK_Ubuntu26/blob/master/Configuration%20details/open3d_azure.markdown).
 
-Use ```recorder_open3d.py``` to record the mkv video using Open3D.
+We have provided two python scripts to record and export the mkv video using Open3D.
 
-Use ```export_open3d.py``` to capture film from mkv file.
+Please use ```recorder_open3d.py``` to record the mkv video using Open3D.
+
+Please use ```export_open3d.py``` to export RGB, Depth data from mkv file.
 

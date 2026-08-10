@@ -2,8 +2,6 @@ import time
 import os
 import json
 import csv
-import numpy as np
-import pyk4a
 from pyk4a import PyK4A, PyK4ARecord, Config, ColorResolution, DepthMode, FPS, ImageFormat, WiredSyncMode
 from pyk4a.errors import K4ATimeoutException
 
