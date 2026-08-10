@@ -1,6 +1,8 @@
 # Azure Kinect DK on Ubuntu
 
-## Installation
+This is a development tools repository for Azure Kinect DK on Ubuntu. 
+
+## A. Installation
 
 The offical [installation](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) only supports Ubuntu 18.04, but you can use the 18.04 deb package in Ubuntu 26.04. 
 
@@ -41,7 +43,7 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
 
-## Configuration and usage
+## B. K4A tools
 ### 1. k4aviewer
 ```bash
 k4aviewer
@@ -53,7 +55,7 @@ If the resolution fo your displayer is 2k or 4k, maybe the font size of k4aviewe
 k4aviewer -HighDPI
 ``` 
 
-### 2. k4arecorder in termial
+### 2. k4arecorder
 Check help document of k4arecorder:
 ```bash
 k4arecorder -h
@@ -65,19 +67,19 @@ Capture video using command line:
 ```bash
 k4arecorder -d NFOV_UNBINNED -c 1080p -r 5 output.mkv
 ```
-## Python env development based pyk4a
+## C. Python env development based pyk4a
 
 pyk4a is the offical python library for Azure Kinect DK. The development document could been check in [this link](https://github.com/etiennedub/pyk4a)
 
-If you want to use this lib, please using ```pip install pyk4a```
+If you want to use this lib, please using ```pip install pyk4a``` in your python environment.
 
 Use ```recorder_pyk4a.py``` to record the mkv video using pyk4a.
 
 Use ```export_pyk4a.py``` to capture film from mkv file.
 
-## Python env development based open3d
+## D. Python env development based open3d
 
-Open3D have supported the Azure Kinect DK development. If you want to use open3d to develop in python enviroment, please create a conda enviroment first and then using ```pip install open3d```.
+Open3D have supported the Azure Kinect DK development. If you want to use open3d to develop in python environment, please create a conda environment first and then using ```pip install open3d```.
 
 The Open3D development document could been check in [this link](https://github.com/MikeMiller0401/AzureKinectDK_Ubuntu26/blob/master/Configuration%20details/open3d_azure.markdown).
 
